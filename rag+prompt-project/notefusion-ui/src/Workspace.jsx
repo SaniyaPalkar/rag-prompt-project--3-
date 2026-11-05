@@ -1,9 +1,11 @@
+
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import Welcome from "./components/Welcome";
 import InputBar from "./components/InputBar";
 import GraphView from "./components/GraphView";
 import LibraryView from "./components/LibraryView";
+import Markdown from "./components/Markdown";
 import { Volume2, VolumeX, Loader2, X } from "lucide-react";
 import { sendChat, uploadFiles, getChat, getModels } from "./api";
 
@@ -176,12 +178,12 @@ export default function Workspace({ user, onLogout }) {
 
       <main className="relative flex-1 overflow-hidden">
         {/* purple glow, top right */}
-        <div className="pointer-events-none absolute -top-40 -right-32 h-130 w-130 rounded-full bg-purple-500/30 blur-3xl" />
+        <div className="pointer-events-none absolute -top-40 -right-32 h-[520px] w-[520px] rounded-full bg-purple-500/30 blur-3xl" />
 
         {status && (
           <div className="absolute left-1/2 top-4 z-10 flex w-[min(40rem,90%)] -translate-x-1/2 items-start gap-3 rounded-xl border border-violet-400/40 bg-[#1c1c20] px-4 py-3 text-sm text-white/85 shadow-lg">
             {statusBusy && <Loader2 size={16} className="mt-0.5 shrink-0 animate-spin text-violet-300" />}
-            <div className="min-w-0 flex-1 whitespace-pre-line wrap-break-word">{status}</div>
+            <div className="min-w-0 flex-1 whitespace-pre-line break-words">{status}</div>
             {!statusBusy && (
               <button onClick={() => flash("", 0)} title="Dismiss" className="shrink-0 text-white/40 hover:text-white">
                 <X size={16} />
@@ -201,15 +203,13 @@ export default function Workspace({ user, onLogout }) {
               {messages.map((m, i) => (
                 <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
                   <div className="max-w-[85%]">
-                    <div
-                      className={
-                        m.role === "user"
-                          ? "whitespace-pre-wrap rounded-2xl bg-violet-500/20 px-4 py-3 text-sm"
-                          : "whitespace-pre-wrap rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-relaxed text-white/90"
-                      }
-                    >
-                      {m.content}
-                    </div>
+                    {m.role === "user" ? (
+                      <div className="whitespace-pre-wrap rounded-2xl bg-violet-500/20 px-4 py-3 text-sm">{m.content}</div>
+                    ) : (
+                      <div className="min-w-0 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-relaxed text-white/90">
+                        <Markdown>{m.content}</Markdown>
+                      </div>
+                    )}
 
                     {m.role === "assistant" && (
                       <button
